@@ -2,3 +2,5 @@
 node_modules/
 api/dist/
 api/node_modules/
+web/node_modules/
+web/dist/

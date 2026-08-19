@@ -1,0 +1,80 @@
+.key-field input,
+.add-form input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink);
+  font: 14px var(--mono);
+}
+
+.table-wrap {
+  margin-top: 1rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  background: #100e0c;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 13px var(--mono);
+}
+
+th,
+td {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid #2a241e;
+  text-align: left;
+}
+
+th {
+  color: var(--copper);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+tbody tr { animation: rise 0.4s ease both; }
+tbody tr:hover { background: #1f1a15; }
+
+.empty,
+.fault {
+  margin: 1.4rem 0;
+  font: 14px var(--mono);
+}
+
+.fault { color: var(--bad); }
+
+.add-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  align-items: end;
+  margin-top: 1rem;
+}
+
+.add-form .fault {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.add-form button {
+  padding: 0.65rem 1.1rem;
+  border: 1px solid var(--amber);
+  background: #2a1d0b;
+  color: var(--amber);
+  font: 500 12px var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.add-form button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .add-form { grid-template-columns: 1fr; }
+}

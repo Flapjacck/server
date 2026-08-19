@@ -42,6 +42,17 @@ services:
     networks:
       - server-net
 
+  web:
+    build: ./web
+    container_name: server-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
+    networks:
+      - server-net
+
   npm:
     image: jc21/nginx-proxy-manager:latest
     container_name: server-npm

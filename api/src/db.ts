@@ -30,12 +30,25 @@ export async function initDb(): Promise<void> {
   }
 }
 
-export async function insertString(value: string): Promise<{ id: number; value: string }> {
-  const result = await pool.query<{ id: number; value: string }>(
-    "INSERT INTO strings (value) VALUES ($1) RETURNING id, value",
+export type StringRow = {
+  id: number;
+  value: string;
+  created_at: Date;
+};
+
+export async function insertString(value: string): Promise<StringRow> {
+  const result = await pool.query<StringRow>(
+    "INSERT INTO strings (value) VALUES ($1) RETURNING id, value, created_at",
     [value]
   );
   return result.rows[0];
+}
+
+export async function listStrings(): Promise<StringRow[]> {
+  const result = await pool.query<StringRow>(
+    "SELECT id, value, created_at FROM strings ORDER BY id DESC LIMIT 200"
+  );
+  return result.rows;
 }
 
 export { pool };
