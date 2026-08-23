@@ -1,9 +1,10 @@
 import express from "express";
-import { requireApiKey } from "./middleware/apiKeyAuth";
 import { healthRouter } from "./routes/health";
-import { stringsRouter } from "./routes/strings";
 
-export function createApp(apiKey: string): express.Express {
+const JSON_BODY_LIMIT = "10kb";
+
+/** Express app with the public health probe. */
+export function createApp(): express.Express {
     const app = express();
 
     app.disable("x-powered-by");
@@ -14,9 +15,8 @@ export function createApp(apiKey: string): express.Express {
         res.setHeader("Referrer-Policy", "no-referrer");
         next();
     });
-    app.use(express.json({ limit: "10kb" }));
+    app.use(express.json({ limit: JSON_BODY_LIMIT }));
     app.use("/health", healthRouter);
-    app.use("/strings", requireApiKey(apiKey), stringsRouter);
 
     return app;
 }

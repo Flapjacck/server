@@ -11,6 +11,12 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/app.ts",
+    "src/config.ts",
+    "src/index.ts",
+    "src/types.ts",
+    "src/routes/health.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

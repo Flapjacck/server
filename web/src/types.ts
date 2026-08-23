@@ -1,11 +1,9 @@
-export type StringRow = {
-  id: number;
-  value: string;
-  created_at: string;
+export const OWS_API_SERVICE = "ows-api";
+
+export type HealthResponse = {
+  ok: true;
+  service: typeof OWS_API_SERVICE;
+  timestamp: string;
 };
 
-export type TableName = "strings";
-
-export const TABLES: { name: TableName; path: string }[] = [
-  { name: "strings", path: "/strings" },
-];
+export type HealthState = "unknown" | "ok" | "down";

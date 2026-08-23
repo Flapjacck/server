@@ -6,7 +6,6 @@ export default defineConfig({
   server: {
     proxy: {
       "/health": "http://127.0.0.1:3000",
-      "/strings": "http://127.0.0.1:3000",
     },
   },
 });

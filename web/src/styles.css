@@ -100,9 +100,7 @@ h1 {
   background: repeating-linear-gradient(180deg, transparent 0 18px, rgba(0, 0, 0, 0.18) 18px 19px);
 }
 
-.rail-label,
-.key-field span,
-.add-form span {
+.rail-label {
   display: block;
   margin-bottom: 0.45rem;
   color: var(--copper);
@@ -113,19 +111,16 @@ h1 {
 
 .rail ul { margin: 0; padding: 0; list-style: none; }
 
-.rail button {
+.rail span {
+  display: block;
   width: 100%;
   padding: 0.55rem 0.7rem;
   border: 1px solid transparent;
-  background: transparent;
   color: var(--muted);
   font: 500 13px var(--mono);
-  text-align: left;
-  cursor: pointer;
 }
 
-.rail button.active,
-.rail button:hover {
+.rail span.active {
   color: var(--amber);
   border-color: var(--copper);
   background: #241c14;
@@ -135,6 +130,50 @@ h1 {
   padding: 1.2rem 0.4rem 0.6rem 1.2rem;
   animation: rise 0.8s 0.12s ease both;
 }
+
+.service-card {
+  margin-top: 0.8rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  background: #100e0c;
+}
+
+.service-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.service-card h2 {
+  margin: 0;
+  font: 500 16px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chip { color: var(--muted); font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; }
+.chip.ok { color: var(--ok); }
+.chip.down { color: var(--bad); }
+.chip.unknown { color: var(--amber); }
+
+.service-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin: 1rem 0 0;
+}
+
+.service-card dt {
+  color: var(--copper);
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.service-card dd { margin: 0.35rem 0 0; font: 14px var(--mono); }
+
+.fault { margin: 1.4rem 0; color: var(--bad); font: 14px var(--mono); }
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(8px); }
@@ -147,4 +186,5 @@ h1 {
   .chassis { margin: 0; }
   .bay { grid-template-columns: 1fr; }
   .rail { border-right: 0; border-bottom: 1px solid var(--line); }
+  .service-card dl { grid-template-columns: 1fr; }
 }

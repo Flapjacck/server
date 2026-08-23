@@ -1,6 +1,4 @@
-import type { StringRow } from "./types";
-
-const KEY_STORAGE = "homelab-api-key";
+import { OWS_API_SERVICE, type HealthResponse } from "./types";
 
 export class ApiError extends Error {
   status: number;
@@ -11,63 +9,38 @@ export class ApiError extends Error {
   }
 }
 
-export function getStoredApiKey(): string {
-  return sessionStorage.getItem(KEY_STORAGE) ?? "";
+/** True when fetch was cancelled because the console unmounted. */
+export function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === "AbortError";
 }
 
-export function setStoredApiKey(key: string): void {
-  if (key) {
-    sessionStorage.setItem(KEY_STORAGE, key);
-  } else {
-    sessionStorage.removeItem(KEY_STORAGE);
-  }
-}
-
-async function request<T>(path: string, init: RequestInit & { apiKey?: string } = {}): Promise<T> {
-  const { apiKey, ...rest } = init;
-  const headers = new Headers(rest.headers);
-
-  if (apiKey) {
-    headers.set("x-api-key", apiKey);
-  }
-  if (rest.body && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+function isHealthResponse(value: unknown): value is HealthResponse {
+  if (!value || typeof value !== "object") {
+    return false;
   }
 
-  const res = await fetch(path, { ...rest, headers });
-  if (!res.ok) {
-    let message = res.statusText;
-    try {
-      const body: unknown = await res.json();
-      if (
-        body &&
-        typeof body === "object" &&
-        "error" in body &&
-        typeof body.error === "string"
-      ) {
-        message = body.error;
-      }
-    } catch {
-      /* ignore non-json */
-    }
-    throw new ApiError(res.status, message);
+  const body = value as Record<string, unknown>;
+
+  return (
+    body.ok === true &&
+    body.service === OWS_API_SERVICE &&
+    typeof body.timestamp === "string"
+  );
+}
+
+/** Load /health and reject anything that is not the OWS payload. */
+export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse> {
+  const response = await fetch("/health", { signal });
+
+  if (!response.ok) {
+    throw new ApiError(response.status, response.statusText);
   }
 
-  return res.json() as Promise<T>;
-}
+  const body: unknown = await response.json();
 
-export function fetchHealth(): Promise<{ ok: boolean }> {
-  return request("/health");
-}
+  if (!isHealthResponse(body)) {
+    throw new ApiError(response.status, "invalid health payload");
+  }
 
-export function fetchStrings(apiKey: string): Promise<StringRow[]> {
-  return request("/strings", { apiKey });
-}
-
-export function createString(apiKey: string, value: string): Promise<StringRow> {
-  return request("/strings", {
-    apiKey,
-    method: "POST",
-    body: JSON.stringify({ value }),
-  });
+  return body;
 }

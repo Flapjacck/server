@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: API tests
+        run: docker build --target test ./api
+      - name: Web tests
+        run: docker build --target test ./web
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start core stack
+        run: docker compose up -d --build api web
+      - name: Smoke health through nginx
+        run: bash scripts/smoke.sh
+      - name: Stop stack
+        if: always()
+        run: docker compose down
