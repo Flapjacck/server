@@ -1,0 +1,170 @@
+/* Sidebar layout styles */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+  transition: transform var(--transition), background-color var(--transition), border-color var(--transition);
+  overflow-y: auto;
+}
+
+/* ─── Brand / logo ─── */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: var(--topbar-height);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-family: 'Geist Mono', monospace;
+}
+
+.logoSub {
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Close button only shows on mobile */
+.closeBtn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  margin-left: auto;
+}
+
+.closeBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--interactive-hover);
+}
+
+/* ─── Nav ─── */
+.nav {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  font-weight: 450;
+  color: var(--text-secondary);
+  transition: background-color var(--transition), color var(--transition);
+  cursor: pointer;
+}
+
+.navItem:hover {
+  background-color: var(--interactive-hover);
+  color: var(--text-primary);
+}
+
+.navItem.active {
+  background-color: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 550;
+}
+
+.phaseBadge {
+  margin-left: auto;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  background-color: var(--neutral-subtle);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* ─── Footer ─── */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.footerLink {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  transition: color var(--transition);
+}
+
+.footerLink:hover {
+  color: var(--text-primary);
+}
+
+.footerDivider {
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
+.footerVersion {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-family: 'Geist Mono', monospace;
+}
+
+.backdrop {
+  display: none;
+}
+
+/* ─── Mobile: sidebar becomes a drawer ─── */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .closeBtn {
+    display: flex;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 39;
+  }
+}

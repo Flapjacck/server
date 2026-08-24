@@ -1,0 +1,54 @@
+/* Badge component styles — scoped via CSS Modules */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 100px; /* pill */
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* ─── Positive states ─── */
+.online,
+.running,
+.available,
+.active {
+  background-color: var(--ok-subtle);
+  color: var(--ok);
+  border-color: var(--ok-border);
+}
+
+/* ─── Warning / transitional states ─── */
+.degraded,
+.restarting,
+.starting,
+.paused,
+.pending {
+  background-color: var(--warning-subtle);
+  color: var(--warning);
+  border-color: var(--warning-border);
+}
+
+/* ─── Error / negative states ─── */
+.offline,
+.stopped,
+.exited,
+.error,
+.inactive {
+  background-color: var(--neutral-subtle);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+/* ─── Unknown / unrecognized ─── */
+.unknown {
+  background-color: var(--neutral-subtle);
+  color: var(--text-tertiary);
+  border-color: var(--border);
+}

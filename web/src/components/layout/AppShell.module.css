@@ -1,0 +1,27 @@
+/* AppShell layout — sidebar fixed on left, main fills the rest */
+
+.shell {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition);
+}
+
+.content {
+  flex: 1;
+  padding: calc(var(--topbar-height) + 24px) 24px 32px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .main { margin-left: 0; }
+  .content { padding: calc(var(--topbar-height) + 16px) 16px 24px; }
+}

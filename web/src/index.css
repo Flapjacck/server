@@ -1,0 +1,87 @@
+/* Global styles, typography, and browser surface theming.
+   Imports reset and tokens first; all rules here use var() exclusively. */
+
+@import './reset.css';
+@import './theme.css';
+
+/* Geist fonts are loaded via Google Fonts in index.html */
+
+/* ─── Base typography ─── */
+html {
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  font-size: 14px; /* Fixed rem scale — product UI at consistent DPI */
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.5;
+  /* Smooth theme transitions without flashing on interactive changes */
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* ─── Text selection ─── */
+::selection {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+/* ─── Focus ring ─── */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Custom scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* ─── Monospace helper ─── */
+code, kbd, pre, .mono {
+  font-family: 'Geist Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 0.875rem;
+}
+
+/* ─── Type scale — fixed rem, tight ratio (1.125) for product UI ─── */
+.text-xs    { font-size: 0.75rem;  line-height: 1rem; }
+.text-sm    { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base  { font-size: 1rem;     line-height: 1.5rem; }
+.text-lg    { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl    { font-size: 1.25rem;  line-height: 1.75rem; }
+.text-2xl   { font-size: 1.5rem;   line-height: 2rem; }
+
+/* ─── Text color helpers ─── */
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary  { color: var(--text-tertiary); }
+.text-accent    { color: var(--accent); }
+
+/* ─── Utility layout ─── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

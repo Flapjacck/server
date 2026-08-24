@@ -1,0 +1,64 @@
+/* StatusDot styles */
+
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+/* ─── Sizes ─── */
+.sm .dot { width: 6px; height: 6px; }
+.md .dot { width: 8px; height: 8px; }
+
+/* Default dot size when size class applied to wrapper */
+.sm { }
+.md { }
+
+.sm .dot,
+.wrapper.sm > .dot {
+  width: 6px;
+  height: 6px;
+}
+
+.md .dot,
+.wrapper.md > .dot {
+  width: 8px;
+  height: 8px;
+}
+
+/* ─── States ─── */
+.ok {
+  background-color: var(--ok);
+  width: 8px;
+  height: 8px;
+  /* Subtle pulse to signal live data */
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+.down {
+  background-color: var(--error);
+  width: 8px;
+  height: 8px;
+}
+
+.unknown {
+  background-color: var(--neutral);
+  width: 8px;
+  height: 8px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
