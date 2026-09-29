@@ -82,8 +82,11 @@ export async function runSubmissionInDocker(
         
         workDir = await mkdtemp(join(submissionsDir, "ows-judge-"));
         const submissionPath = join(workDir, "user.py");
+        
+        console.log(`Writing submission to ${submissionPath}`);
 
         await writeFile(submissionPath, source, "utf8");
+        console.log(`Wrote submission to ${submissionPath}`);
         await pullImageIfMissing(config.judge.runnerImage);
 
         const container = await docker.createContainer({
@@ -98,7 +101,14 @@ export async function runSubmissionInDocker(
                 NanoCpus: Math.floor(config.judge.cpus * 1e9),
                 PidsLimit: config.judge.pidsLimit,
                 CapDrop: ["ALL"],
-                Binds: [`${submissionPath}:/submission/user.py:ro`],
+                Mounts: [
+                    {
+                        Type: "bind",
+                        Source: submissionPath,
+                        Target: "/submission/user.py",
+                        ReadOnly: true,
+                    },
+                ],
             },
             User: "1000:1000",
         });
