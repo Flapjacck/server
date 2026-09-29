@@ -1,5 +1,6 @@
 import express from "express";
 import { healthRouter } from "./routes/health";
+import { judgeRouter } from "./routes/judge";
 
 const JSON_BODY_LIMIT = "10kb";
 
@@ -17,6 +18,7 @@ export function createApp(): express.Express {
     });
     app.use(express.json({ limit: JSON_BODY_LIMIT }));
     app.use("/health", healthRouter);
+    app.use("/judge", judgeRouter);
 
     return app;
 }

@@ -3,4 +3,3 @@ dist
 *.log
 src/db.ts
 src/routes/strings.ts
-src/middleware

@@ -8,8 +8,6 @@ RUN npm ci
 COPY tsconfig.json ./
 COPY src ./src
 COPY tests ./tests
-# Old checkouts may still have String Bay files; do not compile them.
-RUN rm -f src/db.ts src/routes/strings.ts src/middleware/apiKeyAuth.ts
 
 FROM deps AS test
 

@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Judge routes unit-test with a mocked Docker runner; full judge smoke is scripts/judge-smoke.sh locally.
       - name: API tests
         run: docker build --target test ./api
       - name: Web tests

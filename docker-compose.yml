@@ -9,14 +9,27 @@ services:
     networks:
       - server-net
 
+  judge-runner:
+    build: ./api/judge/runner-image
+    image: ows-judge-runner:local
+    profiles:
+      - judge
+
   api:
     build: ./api
     container_name: ows-api
     restart: unless-stopped
     ports:
       - "127.0.0.1:3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       PORT: 3000
+      JUDGE_API_KEYS: ${JUDGE_API_KEYS:-}
+      JUDGE_RUNNER_IMAGE: ${JUDGE_RUNNER_IMAGE:-ows-judge-runner:local}
+      JUDGE_MAX_CONCURRENT: ${JUDGE_MAX_CONCURRENT:-8}
+      JUDGE_RUN_TIMEOUT_MS: ${JUDGE_RUN_TIMEOUT_MS:-8000}
+      JUDGE_RATE_LIMIT_PER_MIN: ${JUDGE_RATE_LIMIT_PER_MIN:-20}
     healthcheck:
       test:
         [
