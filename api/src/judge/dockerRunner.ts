@@ -8,7 +8,7 @@ import type { RunnerResult } from "./types";
 
 const docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
-const RUNNER_ENTRYPOINT = ["python", "/opt/run_tests.py"];
+const RUNNER_ENTRYPOINT = ["/opt/entrypoint.sh"];
 
 /** Docker multiplexes stdout/stderr with 8-byte frame headers. */
 function demuxDockerLogs(buffer: Buffer): string {
@@ -74,14 +74,15 @@ export async function runSubmissionInDocker(
     source: string,
 ): Promise<RunnerResult> {
     const submissionsDir = "/tmp/judge-submissions";
-    let workDir: string | undefined;
+    let submissionPath: string | undefined;
     
     try {
         // Ensure the submissions directory exists
         await mkdir(submissionsDir, { recursive: true });
         
-        workDir = await mkdtemp(join(submissionsDir, "ows-judge-"));
-        const submissionPath = join(workDir, "user.py");
+        // Write directly to judge-submissions with a unique name
+        const submissionId = Math.random().toString(36).substring(7);
+        submissionPath = join(submissionsDir, `user-${submissionId}.py`);
         
         console.log(`Writing submission to ${submissionPath}`);
 
@@ -89,9 +90,10 @@ export async function runSubmissionInDocker(
         console.log(`Wrote submission to ${submissionPath}`);
         await pullImageIfMissing(config.judge.runnerImage);
 
+        const submissionFilename = submissionPath.split('/').pop() || 'user.py';
         const container = await docker.createContainer({
             Image: config.judge.runnerImage,
-            Cmd: [...RUNNER_ENTRYPOINT, taskId],
+            Cmd: [...RUNNER_ENTRYPOINT, taskId, submissionFilename],
             HostConfig: {
                 AutoRemove: true,
                 NetworkMode: "none",
@@ -103,15 +105,17 @@ export async function runSubmissionInDocker(
                 CapDrop: ["ALL"],
                 Mounts: [
                     {
-                        Type: "bind",
-                        Source: submissionPath,
-                        Target: "/submission/user.py",
+                        Type: "volume",
+                        Source: "server_judge_submissions",
+                        Target: "/tmp/judge-submissions",
                         ReadOnly: true,
                     },
                 ],
             },
             User: "1000:1000",
         });
+        
+        console.log(`Created container with volume mount for ${submissionPath}`);
 
         await container.start();
 
@@ -148,8 +152,8 @@ export async function runSubmissionInDocker(
     } catch (error) {
         return { passed: 0, total: 0, error: "runner_error" };
     } finally {
-        if (workDir) {
-            await rm(workDir, { recursive: true, force: true });
+        if (submissionPath) {
+            await rm(submissionPath, { force: true }).catch(() => undefined);
         }
     }
 }

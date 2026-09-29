@@ -31,11 +31,12 @@ def count_tests(test_path: Path) -> int:
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print(json.dumps({"passed": 0, "total": 0, "error": "bad_args"}))
         sys.exit(1)
 
     task_id = sys.argv[1]
+    submission_file = sys.argv[2] if len(sys.argv) > 2 else "user.py"
     module_name = TASK_TO_MODULE.get(task_id)
     if not module_name:
         print(json.dumps({"passed": 0, "total": 0, "error": "unknown_task"}))
