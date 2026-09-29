@@ -19,7 +19,7 @@ export function createApp(): express.Express {
     });
     
     // Handle preflight requests
-    app.options("*", (_req, res) => {
+    app.options(/.*/, (_req, res) => {
         res.sendStatus(200);
     });
 
