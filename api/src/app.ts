@@ -9,6 +9,20 @@ export function createApp(): express.Express {
     const app = express();
 
     app.disable("x-powered-by");
+    
+    // CORS middleware
+    app.use((_req, res, next) => {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        next();
+    });
+    
+    // Handle preflight requests
+    app.options("*", (_req, res) => {
+        res.sendStatus(200);
+    });
+
     app.use((_req, res, next) => {
         res.setHeader("Cache-Control", "no-store");
         res.setHeader("X-Content-Type-Options", "nosniff");
