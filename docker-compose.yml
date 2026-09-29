@@ -23,6 +23,7 @@ services:
       - "127.0.0.1:3000:3000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - judge_submissions:/tmp/judge-submissions
     environment:
       PORT: 3000
       JUDGE_API_KEYS: ${JUDGE_API_KEYS:-}
@@ -77,3 +78,4 @@ networks:
 volumes:
   npm_data:
   npm_letsencrypt:
+  judge_submissions:

@@ -73,7 +73,7 @@ export async function runSubmissionInDocker(
     taskId: JudgeTaskId,
     source: string,
 ): Promise<RunnerResult> {
-    const workDir = await mkdtemp(join(tmpdir(), "ows-judge-"));
+    const workDir = await mkdtemp(join("/tmp/judge-submissions", "ows-judge-"));
     const submissionPath = join(workDir, "user.py");
 
     try {
