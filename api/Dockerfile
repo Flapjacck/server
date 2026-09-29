@@ -9,17 +9,31 @@ RUN npm install -g pnpm
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile --prod
+# Install dependencies (including dev dependencies for build)
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY tsconfig.json ./
 COPY src ./src
 
 # Build TypeScript
-RUN npm run build
+RUN pnpm run build
 
-# Stage 2: Runtime
+# Stage 2: Dependencies (production only)
+FROM node:20-alpine AS prod-deps
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod
+
+# Stage 3: Runtime
 FROM node:20-alpine
 
 WORKDIR /app
@@ -27,8 +41,8 @@ WORKDIR /app
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
-# Copy node_modules from builder
-COPY --from=builder /app/node_modules ./node_modules
+# Copy production node_modules from deps stage
+COPY --from=prod-deps /app/node_modules ./node_modules
 
 # Copy compiled code from builder
 COPY --from=builder /app/dist ./dist
