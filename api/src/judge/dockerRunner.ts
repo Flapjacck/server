@@ -1,4 +1,4 @@
-import { mkdtemp, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, writeFile, rm, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Docker from "dockerode";
@@ -73,10 +73,15 @@ export async function runSubmissionInDocker(
     taskId: JudgeTaskId,
     source: string,
 ): Promise<RunnerResult> {
-    const workDir = await mkdtemp(join("/tmp/judge-submissions", "ows-judge-"));
-    const submissionPath = join(workDir, "user.py");
-
+    const submissionsDir = "/tmp/judge-submissions";
+    
     try {
+        // Ensure the submissions directory exists
+        await mkdir(submissionsDir, { recursive: true });
+        
+        const workDir = await mkdtemp(join(submissionsDir, "ows-judge-"));
+        const submissionPath = join(workDir, "user.py");
+
         await writeFile(submissionPath, source, "utf8");
         await pullImageIfMissing(config.judge.runnerImage);
 
