@@ -74,12 +74,13 @@ export async function runSubmissionInDocker(
     source: string,
 ): Promise<RunnerResult> {
     const submissionsDir = "/tmp/judge-submissions";
+    let workDir: string | undefined;
     
     try {
         // Ensure the submissions directory exists
         await mkdir(submissionsDir, { recursive: true });
         
-        const workDir = await mkdtemp(join(submissionsDir, "ows-judge-"));
+        workDir = await mkdtemp(join(submissionsDir, "ows-judge-"));
         const submissionPath = join(workDir, "user.py");
 
         await writeFile(submissionPath, source, "utf8");
@@ -137,7 +138,9 @@ export async function runSubmissionInDocker(
     } catch (error) {
         return { passed: 0, total: 0, error: "runner_error" };
     } finally {
-        await rm(workDir, { recursive: true, force: true });
+        if (workDir) {
+            await rm(workDir, { recursive: true, force: true });
+        }
     }
 }
 
