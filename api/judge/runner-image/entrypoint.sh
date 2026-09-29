@@ -9,14 +9,11 @@ if [ -z "$TASK_ID" ]; then
     exit 1
 fi
 
-# Create submission directory if needed
-mkdir -p /submission
-
-# Copy or link the submission file
+# Copy the submission file to /tmp (which is writable)
 if [ -f "/tmp/judge-submissions/$SUBMISSION_FILE" ]; then
-    cp "/tmp/judge-submissions/$SUBMISSION_FILE" "/submission/user.py"
+    cp "/tmp/judge-submissions/$SUBMISSION_FILE" "/tmp/user.py"
 elif [ -f "/tmp/judge-submissions/user.py" ]; then
-    cp "/tmp/judge-submissions/user.py" "/submission/user.py"
+    cp "/tmp/judge-submissions/user.py" "/tmp/user.py"
 else
     echo '{"passed": 0, "total": 0, "error": "submission_not_found"}' >&2
     exit 1
