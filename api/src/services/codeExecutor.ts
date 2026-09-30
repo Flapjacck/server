@@ -40,7 +40,7 @@ const MAX_STDERR_BYTES = 8_192;
  *
  * In Docker the layout is:
  *   /app/tests/challenges/<challengeId>_test.py
- *   /app/templates/challenges/<challengeId>.py
+ *   /app/templates/challenges/<qN>.py  (see challenges/registry.ts)
  *
  * In local dev (running from api/):
  *   api/tests/challenges/<challengeId>_test.py

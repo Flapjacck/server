@@ -7,6 +7,10 @@
 
 import fs from "fs/promises";
 import path from "path";
+import {
+  getTemplateBasename,
+  getTemplateDownloadFileName,
+} from "../challenges/registry.js";
 
 // ── Path resolution ───────────────────────────────────────────────────────────
 
@@ -16,12 +20,15 @@ import path from "path";
  * underscore-separated ("merge_two_sorted_lists") slugs.
  *
  * Layout (same in dev and Docker):
- *   api/templates/challenges/<challengeId>.py
+ *   api/templates/challenges/<qN>.py
  */
 function resolveTemplatePath(challengeId: string): string {
-  const normalized = challengeId.replace(/-/g, "_");
+  const basename = getTemplateBasename(challengeId);
+  if (!basename) {
+    throw new Error(`Template not found for challenge: "${challengeId}"`);
+  }
   const base = path.resolve(new URL(import.meta.url).pathname, "../../..");
-  return path.join(base, "templates", "challenges", `${normalized}.py`);
+  return path.join(base, "templates", "challenges", `${basename}.py`);
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -43,6 +50,9 @@ export async function getTemplatePath(challengeId: string): Promise<string> {
 
   return filePath;
 }
+
+/** Download filename for Content-Disposition (e.g. q1.py). */
+export { getTemplateDownloadFileName };
 
 /**
  * Read and return the raw source of a template file.

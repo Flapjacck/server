@@ -15,7 +15,10 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { runTests } from "../services/testRunner.js";
-import { getTemplatePath } from "../services/templateManager.js";
+import {
+  getTemplateDownloadFileName,
+  getTemplatePath,
+} from "../services/templateManager.js";
 import { uploadMiddleware } from "../middleware/fileUploadHandler.js";
 import { logger } from "../logger.js";
 import type { ErrorResponse } from "../types.js";
@@ -113,8 +116,7 @@ router.get("/:challengeId/template", async (req: Request, res: Response): Promis
 
   try {
     const filePath = await getTemplatePath(challengeId);
-    const normalized = challengeId.replace(/-/g, "_");
-    const fileName = `${normalized}.py`;
+    const fileName = getTemplateDownloadFileName(challengeId);
 
     // Stream the file as a download attachment
     res.setHeader("Content-Type", "text/x-python");
