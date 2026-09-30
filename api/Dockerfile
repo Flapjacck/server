@@ -57,6 +57,9 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY package.json ./
 COPY scripts/docker-healthcheck.cjs ./scripts/docker-healthcheck.cjs
+# Challenge runner: pytest suites and downloadable starter templates
+COPY tests/challenges ./tests/challenges
+COPY templates/challenges ./templates/challenges
 
 # Change ownership to nodejs user
 RUN chown -R nodejs:nodejs /app
