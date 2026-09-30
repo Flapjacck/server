@@ -1,8 +1,9 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import type { Request, Response, Router as IRouter } from "express";
 import type { HealthResponse } from "../types.js";
 import { apiLogger } from "../logger.js";
 
-const router = Router();
+const router: IRouter = Router();
 const startTime = Date.now();
 
 /**

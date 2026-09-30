@@ -32,11 +32,12 @@ export const logger = createLogger();
 
 // HTTP request logging middleware
 export function createHttpLogger() {
-  return pinoHttp({
-    logger,
-    // Skip logging health checks to reduce noise
-    skip: (req) => req.url === "/health",
-  });
+  return pinoHttp(
+    {
+      logger,
+      autoLogging: true,
+    }
+  );
 }
 
 // Child loggers for specific modules

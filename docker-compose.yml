@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # Express API backend
   api:
@@ -8,6 +6,11 @@ services:
       dockerfile: Dockerfile
     container_name: secure-api
     restart: unless-stopped
+    env_file:
+      - path: .env.local
+        required: false
+      - path: .env.prod
+        required: false
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - PORT=3000
@@ -19,11 +22,11 @@ services:
     networks:
       - internal
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      test: ["CMD", "node", "scripts/docker-healthcheck.cjs"]
       interval: 30s
       timeout: 3s
       retries: 3
-      start_period: 10s
+      start_period: 15s
     volumes:
       - ./api/src:/app/src:ro
     labels:
@@ -57,13 +60,15 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: secure-cloudflare-tunnel
     restart: unless-stopped
-    command: tunnel run
+    command: tunnel --no-autoupdate run
     environment:
-      - CLOUDFLARED_TOKEN=${CLOUDFLARED_TOKEN}
+      # cloudflared reads TUNNEL_TOKEN; keep CLOUDFLARED_TOKEN in .env.prod for docs
+      TUNNEL_TOKEN: ${CLOUDFLARED_TOKEN}
     networks:
       - internal
     depends_on:
-      - nginx
+      nginx:
+        condition: service_healthy
     profiles:
       - prod
     labels:

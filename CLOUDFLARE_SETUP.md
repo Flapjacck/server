@@ -116,13 +116,35 @@ export $(cat .env.prod | xargs)
 docker-compose --profile prod up -d
 ```
 
+### Configure the tunnel origin (Docker Compose)
+
+The tunnel container is **not** on the host network. In **Zero Trust → Networks → Tunnels → (your tunnel) → Public Hostname**, set the service URL to the **Compose service name**, not `localhost`:
+
+| Field | Value |
+|--------|--------|
+| Subdomain | `api` (or your hostname) |
+| Service type | HTTP |
+| URL | **`http://nginx:80`** |
+
+Using `http://localhost:80` or `http://127.0.0.1:80` causes **Cloudflare 502** — cloudflared would call itself, not nginx.
+
+To test without nginx, you can temporarily use `http://api:3000` (API container only).
+
+### Verify origin from the Docker network
+
+```bash
+docker run --rm --network server_internal curlimages/curl -s http://nginx/health
+docker run --rm --network server_internal curlimages/curl -s http://api:3000/health
+```
+
+Both should return JSON with `"status":"ok"`.
+
 ### Verify tunnel is running
 
 ```bash
 docker logs secure-cloudflare-tunnel
 
-# Should show:
-# Connected to api.yourdomain.com
+# Should show registered connections, not repeated origin errors
 ```
 
 ### Test from public internet
