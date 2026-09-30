@@ -3,6 +3,7 @@ import compression from "compression";
 import { createHttpLogger, logger } from "./logger.js";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.js";
 import healthRoutes from "./routes/health.js";
+import challengeRoutes from "./routes/challenges.js";
 import type { ErrorResponse } from "./types.js";
 
 export function createApp(): Express {
@@ -51,6 +52,9 @@ export function createApp(): Express {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // Routes: Challenge submission and template download
+  app.use("/api/challenges", challengeRoutes);
 
   // 404 handler
   app.use((req: Request, res: Response): void => {

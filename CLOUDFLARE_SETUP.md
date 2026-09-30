@@ -280,3 +280,145 @@ cloudflared tunnel delete my-api-tunnel
 - [Cloudflare Tunnel Docs](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/do-more-with-tunnel/)
 - [Cloudflare CLI Reference](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/)
 - [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/identity/users/)
+
+---
+
+## Code Challenge Platform
+
+This API includes a LeetCode-style code testing backend.  The sections below
+document the challenge structure, API endpoints, and how to add new challenges.
+
+### Architecture
+
+```
+User submits Python code (JSON body or .py file upload)
+    ↓
+POST /api/challenges/:challengeId/submit
+    ↓
+codeExecutor.ts — writes solution.py + test file to a temp dir,
+                  runs pytest as a subprocess with a 10 s timeout
+    ↓
+testResultParser.ts — converts the pytest-json-report output into a
+                      structured JSON response
+    ↓
+{ allPassed, totalDurationSeconds, tests: [ { name, passed, message } ] }
+```
+
+### Endpoints
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `POST` | `/api/challenges/:challengeId/submit` | X-API-Key | Submit code for testing |
+| `GET`  | `/api/challenges/:challengeId/template` | X-API-Key | Download blank starter file |
+
+**Submit — request formats**
+
+```jsonc
+// Option A: JSON body
+POST /api/challenges/merge_two_sorted_lists/submit
+Content-Type: application/json
+X-API-Key: <key>
+
+{ "code": "class Solution:\n    def mergeTwoLists(self, ...):\n        ..." }
+```
+
+```
+# Option B: multipart file upload
+POST /api/challenges/merge_two_sorted_lists/submit
+Content-Type: multipart/form-data
+X-API-Key: <key>
+Field: code = solution.py (max 100 KB)
+```
+
+**Submit — response**
+
+```jsonc
+// All tests passed
+{
+  "allPassed": true,
+  "totalDurationSeconds": 0.043,
+  "tests": [
+    { "name": "example 1",                    "passed": true, "message": "", "durationSeconds": 0.01 },
+    { "name": "both empty",                   "passed": true, "message": "", "durationSeconds": 0.001 },
+    { "name": "one empty left",               "passed": true, "message": "", "durationSeconds": 0.001 },
+    { "name": "single elements reverse order","passed": true, "message": "", "durationSeconds": 0.001 }
+  ]
+}
+
+// A test failed
+{
+  "allPassed": false,
+  "totalDurationSeconds": 0.031,
+  "tests": [
+    { "name": "example 1", "passed": false, "message": "AssertionError: Expected [1,1,2,3,4,4] but got []", "durationSeconds": 0.005 },
+    { "name": "both empty", "passed": true,  "message": "", "durationSeconds": 0.001 }
+  ]
+}
+
+// Syntax / import error
+{
+  "allPassed": false,
+  "totalDurationSeconds": 0,
+  "tests": [],
+  "executionError": "SyntaxError: invalid syntax | line 5"
+}
+```
+
+### Challenges
+
+| ID (slug) | Title | Difficulty |
+|-----------|-------|------------|
+| `merge_two_sorted_lists` | Merge Two Sorted Lists | Easy |
+| `binary_tree_inorder_traversal` | Binary Tree Inorder Traversal | Easy |
+| `grade_calculator_with_curve` | Grade Calculator with Curve | Easy |
+
+Challenge slugs may use hyphens or underscores interchangeably in the URL
+(e.g. `merge-two-sorted-lists` and `merge_two_sorted_lists` both work).
+
+### Directory Layout
+
+```
+api/
+├── tests/challenges/          ← pytest test files (run against user code)
+│   ├── merge_two_sorted_lists_test.py
+│   ├── binary_tree_inorder_traversal_test.py
+│   └── grade_calculator_with_curve_test.py
+├── templates/challenges/      ← blank starter templates served for download
+│   ├── merge_two_sorted_lists.py
+│   ├── binary_tree_inorder_traversal.py
+│   └── grade_calculator_with_curve.py
+└── solutions/challenges/      ← reference solutions (not served publicly)
+    ├── merge_two_sorted_lists_iterative.py
+    ├── merge_two_sorted_lists_recursive.py
+    ├── binary_tree_inorder_traversal_recursive.py
+    ├── binary_tree_inorder_traversal_iterative.py
+    ├── grade_calculator_with_curve_loop.py
+    └── grade_calculator_with_curve_comprehension.py
+```
+
+### Adding a New Challenge
+
+1. **Create the test file** in `api/tests/challenges/<slug>_test.py`.
+   - Name test functions `test_<description>`.
+   - Import from `solution` (e.g. `from solution import Solution`).
+
+2. **Create the blank template** in `api/templates/challenges/<slug>.py`.
+   - Include the problem statement as a docstring.
+   - Stub out the required class/function with `pass`.
+
+3. **(Optional) Add reference solutions** in `api/solutions/challenges/`.
+
+4. **Verify** by running pytest locally:
+   ```bash
+   cp api/solutions/challenges/<slug>_<approach>.py /tmp/solution.py
+   cp api/tests/challenges/<slug>_test.py /tmp/test_challenge.py
+   python3 -m pytest /tmp/test_challenge.py -v
+   ```
+
+### Security Notes
+
+- User code runs as the same OS user as the API process (`nodejs` in Docker).
+- Each submission is isolated in a disposable temp directory under `/tmp`.
+- `pytest-timeout` kills individual test cases after **10 seconds**.
+- The subprocess is sent `SIGKILL` after **15 seconds** regardless.
+- Submitted files are capped at **100 KB**.

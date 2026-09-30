@@ -38,6 +38,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Install Python 3 + pip + pytest tools for sandboxed code execution
+# pytest-json-report: structured JSON output for result parsing
+# pytest-timeout: kill runaway user code after N seconds
+RUN apk add --no-cache python3 py3-pip && \
+    pip3 install --break-system-packages \
+      pytest \
+      pytest-json-report \
+      pytest-timeout
+
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
