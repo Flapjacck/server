@@ -1,14 +1,10 @@
-class ListNode(object):
-    def __init__(self, val=0, next=None):
+class TreeNode(object):
+    def __init__(self, val=0, left=None, right=None):
         self.val = val
-        self.next = next
+        self.left = left
+        self.right = right
 
 
 class Solution(object):
-    def mergeTwoLists(self, list1, list2):
-        """
-        :type list1: Optional[ListNode]
-        :type list2: Optional[ListNode]
-        :rtype: Optional[ListNode]
-        """
+    def solve(self, root):
         pass

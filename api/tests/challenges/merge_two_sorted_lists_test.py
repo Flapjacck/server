@@ -4,7 +4,7 @@ Difficulty: Easy
 
 These tests are run against the student's solution.py file, which must define:
   - class ListNode
-  - class Solution with a mergeTwoLists(self, list1, list2) method
+  - class Solution with a solve(self, list1, list2) method
 """
 
 import pytest
@@ -41,7 +41,7 @@ def test_example_1():
     """[1,2,4] merged with [1,3,4] should give [1,1,2,3,4,4]"""
     l1 = make_list([1, 2, 4])
     l2 = make_list([1, 3, 4])
-    result = to_list(sol.mergeTwoLists(l1, l2))
+    result = to_list(sol.solve(l1, l2))
     assert result == [1, 1, 2, 3, 4, 4], (
         f"Expected [1,1,2,3,4,4] but got {result}"
     )
@@ -49,7 +49,7 @@ def test_example_1():
 
 def test_both_empty():
     """Two empty lists should return None (empty list)"""
-    result = sol.mergeTwoLists(None, None)
+    result = sol.solve(None, None)
     assert result is None, (
         f"Expected None for two empty lists but got a node with val={result.val if result else '?'}"
     )
@@ -58,7 +58,7 @@ def test_both_empty():
 def test_one_empty_left():
     """Empty list1 + [0] should return [0]"""
     l2 = make_list([0])
-    result = to_list(sol.mergeTwoLists(None, l2))
+    result = to_list(sol.solve(None, l2))
     assert result == [0], f"Expected [0] but got {result}"
 
 
@@ -66,5 +66,5 @@ def test_single_elements_reverse_order():
     """[2] merged with [1] should give [1,2] (smaller first)"""
     l1 = make_list([2])
     l2 = make_list([1])
-    result = to_list(sol.mergeTwoLists(l1, l2))
+    result = to_list(sol.solve(l1, l2))
     assert result == [1, 2], f"Expected [1,2] but got {result}"

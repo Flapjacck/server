@@ -4,7 +4,7 @@ Difficulty: Easy
 
 These tests are run against the student's solution.py file, which must define:
   - class TreeNode
-  - class Solution with an inorderTraversal(self, root) method
+  - class Solution with a solve(self, root) method
 
 Inorder traversal visits nodes in Left → Root → Right order.
 """
@@ -62,14 +62,14 @@ sol = Solution()
 def test_example_1():
     """[1,null,2,3] → [1,3,2]"""
     root = build_tree([1, None, 2, 3])
-    result = sol.inorderTraversal(root)
+    result = sol.solve(root)
     assert result == [1, 3, 2], f"Expected [1,3,2] but got {result}"
 
 
 def test_example_2():
     """[1,2,3,4,5,null,8,null,null,6,7,9] → [4,2,6,5,7,1,3,9,8]"""
     root = build_tree([1, 2, 3, 4, 5, None, 8, None, None, 6, 7, 9])
-    result = sol.inorderTraversal(root)
+    result = sol.solve(root)
     assert result == [4, 2, 6, 5, 7, 1, 3, 9, 8], (
         f"Expected [4,2,6,5,7,1,3,9,8] but got {result}"
     )
@@ -77,12 +77,12 @@ def test_example_2():
 
 def test_empty_tree():
     """Empty tree (None root) → []"""
-    result = sol.inorderTraversal(None)
+    result = sol.solve(None)
     assert result == [], f"Expected [] for empty tree but got {result}"
 
 
 def test_single_node():
     """Single node [1] → [1]"""
     root = build_tree([1])
-    result = sol.inorderTraversal(root)
+    result = sol.solve(root)
     assert result == [1], f"Expected [1] but got {result}"

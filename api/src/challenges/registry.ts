@@ -8,9 +8,9 @@ export function normalizeChallengeId(challengeId: string): string {
 }
 
 const TEMPLATE_BASENAME_BY_CHALLENGE: Record<string, string> = {
-  binary_tree_inorder_traversal: "q1",
-  grade_calculator_with_curve: "q2",
-  merge_two_sorted_lists: "q3",
+  grade_calculator_with_curve: "q1",
+  merge_two_sorted_lists: "q2",
+  binary_tree_inorder_traversal: "q3",
 };
 
 export function getTemplateBasename(challengeId: string): string | undefined {

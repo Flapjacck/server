@@ -1,14 +1,12 @@
-class TreeNode(object):
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
+def solution(scores):
+    pass
 
 
-class Solution(object):
-    def inorderTraversal(self, root):
-        """
-        :type root: Optional[TreeNode]
-        :rtype: List[int]
-        """
-        pass
+if __name__ == "__main__":
+    score1 = int(input())
+    score2 = int(input())
+    score3 = int(input())
+    letter_grades, average = solution([score1, score2, score3])
+    for grade in letter_grades:
+        print(grade)
+    print(f"{average:.1f}")
